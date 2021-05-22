@@ -6,9 +6,11 @@ This repository contains the data, code and figures for the manuscript "Modellin
 The manuscript and supplementary material of the study can be found on ... 
 
 ## Model code
-The simulation code was built by Thi Mui Pham using R (version 4.0.2). A more detailed description can be found in the supplementary material. 
+The simulation code was built by Thi Mui Pham using R (version 4.0.2). 
 
-The code is divided into several parts. 
+The code is divided into several parts. Please find a short overview below. A more detailed description can be found in the supplementary material. 
+### Running the code
+run_simulations_in_parallel.sh: Bash script to run the simulation code for several scenarios in parallel. 
 ### Simulation
 covid19school_simulation.R: Run the simulation (epidemic) for several iterations and several scenarios
 ### Epidemic
