@@ -17,6 +17,7 @@ The code is divided into several parts. Please find a short overview below. A mo
 [covid19school_epidemic.R](https://github.com/tm-pham/covid19_school_transmission/blob/master/model_code/covid19school_epidemic.R): Function for simulating the epidemic in the school
 ### Variables
 [covid19school_vars.R](https://github.com/tm-pham/covid19_school_transmission/blob/master/model_code/covid19school_vars.R): Setting variabels
+
 [covid19school_init_vars.R](https://github.com/tm-pham/covid19_school_transmission/blob/master/model_code/covid19school_init_vars.R): Initializing the data frames for students and teachers and contact networks of students. 
 ### Functions
 [covid19school_screening_function.R](https://github.com/tm-pham/covid19_school_transmission/blob/master/model_code/covid19school_screening_function.R): Function for regular screening
