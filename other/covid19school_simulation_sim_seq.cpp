@@ -7,38 +7,33 @@ source("covid19school_vars.R")      # Load all relevant variables
 source("covid19school_epidemic.R")  # Load main function for simulation
 
 ### Variables
-iter=100
+iter=1
 
 resultsPath="../results/"
-folder='simD'
+folder='sim'
 if(!file.exists(paste0(resultsPath,folder))) dir.create(file.path(paste0(resultsPath,folder)))
 print(paste0("File path = ", resultsPath,folder))
 
 ### Scenarios
-suffix <- c("", "", "_vaccination","_risk_based_testing","_screening_twice_vaccination","_screening_twice_weekly")
+suffix <- c("", "", "_vaccination","_risk_based_testing","_risk_based_testing","_screening_twice_weekly","_screening_weekly")
 scenarios <- c("Full occup", 
                "Half occup", 
                "Vaccination (full)", 
+               "Risk based testing (full)", 
                "Risk based testing (half)",
-               "Screening twice + Vaccination (full)",
-               "Screening twice weekly (full)")
+               "Screening twice weekly (full)",
+               "Screening weekly (full)")
 length(suffix)==length(scenarios)
 
 ###
 tol = 1e-5
 
-###
-no_int_vec = c(F,rep(F, 5))
-
 ### Proportion of effective contacts of teachers
 # 0.5 for half occupancy, 0.3 for full occupancy
-sample_prop = rep(1, length(scenarios))
-# sample_prop = c(0.15, 0.25, 0.15, 0.25, 0.15, 0.15)
-sample_prop = c(0.3, 0.5, 0.3, 0.5, 0.3, 0.3)
+sample_prop = c(0.3, 0.5, 0.3, 0.3, 0.5, 0.3, 0.3)
 
 ### Scaling factor for transmission probability from teachers
-cont_susc_scale = c(0.5, 0.85)
-# cont_susc_scale = c(1, 1)
+cont_susc_scale = c(0.25, 0.5)
 
 ### Scaling factor for transmission probability from teachers
 prop_vaccinated = c(0, 0.85)
@@ -52,15 +47,16 @@ group_per_step <- rep(c(rep(1,(1/steps)*(24/unit)),rep(2,(1/steps)*(24/unit))), 
 types <- c("S", "PS", "IS", "IA", "R", "IH", "Q")
 
 ### External incidence rate for importations
-external_prob = 1.5*c(0.0007965315, 0.0007965315)
+external_prob = 2*c(0.0007965315, 0.0007965315)
 
 ### Screening days
 testing_mat <- matrix(c(rep(0, times=7), 
                         rep(0, times=7), 
                         rep(0, times=7), 
                         rep(0, times=7), 
+                        rep(0, times=7), 
                         c(1,0,1,0,0,0,0),
-                        c(1,0,1,0,0,0,0)), ncol=7, byrow=T)
+                        c(1,0,0,0,0,0,0)), ncol=7, byrow=T)
 colnames(testing_mat) <- day_names
 nrow(testing_mat)==length(scenarios)
 
@@ -69,19 +65,16 @@ screening_adherence <- 0.5
 risk_testing_adherence <- 0.5
 
 ### Occupancy
-occup_suffix <- c("full_occup",
-                  "half_occup",
-                  "full_occup",
-                  "half_occup",
-                  "full_occup",
-                  "full_occup")
-occup <- c(1, 0.5, 
-           1, 0.5,
+occup_suffix <- c("full_occup","half_occup","full_occup",
+                  "full_occup","half_occup",
+                  "full_occup","full_occup")
+occup <- c(1, 0.5, 1, 
+           1, 0.5, 
            1, 1) # Occupancy level, options: 0.5, 1
 
 ### Flags for screening, risk-based testing and vaccination
-scr_flags <- c(F,F,F,F,T,T); risk_flags <- c(F,F,F,T,F,F)
-vacc_flag <- c(F,F,T,F,T,F)
+scr_flags <- c(F,F,F,F,F,T,T); risk_flags <- c(F,F,F,T,T,F,F)
+vacc_flag <- c(F,F,T,F,F,F,F)
 
 ## ============================================================================ #
 # Absent days and absent individuals
@@ -114,8 +107,7 @@ epidemic_list <- vector(mode="list", length=length(scenarios))
 # Starting the simulations
 # ============================================================================ #
 total_start_time <- Sys.time()
-print(paste0("Number of iterations: ", iter))
-for(scenario in 1){
+for(scenario in seq){
   # Matrix output template
   mat <- matrix(0, nrow=length(time_steps), ncol=iter)
   ns <- nt <- rep(list(mat),7)
@@ -124,6 +116,7 @@ for(scenario in 1){
   start_time <- Sys.time()
   for(it in 1:iter){
     epidemic <- school.epidemic(seed=it, 
+                                df_history, df_agent, df_teach_hist, df_teacher,
                                 occup = occup[scenario],
                                 steps = steps,
                                 time_period = time_period, 
@@ -135,25 +128,22 @@ for(scenario in 1){
                                 screening_flag = scr_flags[scenario], 
                                 risk_based_flag = risk_flags[scenario],
                                 vaccination_flag = vacc_flag[scenario],
+                                isolation_flag = T, 
                                 external_prob = external_prob, 
                                 cont_close = cont_close, 
                                 cont_class = cont_class, 
                                 cont_grade = cont_grade, 
-                                cont_out_school = cont_out_school,
-                                cont_teacher = cont_teacher,
+                                cont_teacher = cont_teacher, 
                                 cont_tt = cont_tt,
-                                cont_ts = cont_ts,
                                 susc_close = susc_close, 
                                 susc_class = susc_class, 
                                 susc_grade = susc_grade, 
                                 susc_out_school = susc_out_school, 
                                 susc_teacher = susc_teacher, 
                                 susc_tt = susc_tt, 
-                                susc_ts = susc_ts,
                                 sample_prop=sample_prop[scenario], 
                                 prop_vaccinated = prop_vaccinated,
-                                cont_susc_scale = cont_susc_scale,
-                                no_intervention = no_int_vec[scenario],
+                                cont_susc_scale = cont_susc_scale, 
                                 tol=tol)
     df_history <- epidemic$df_history
     df_agent <- epidemic$df_agent
@@ -167,16 +157,6 @@ for(scenario in 1){
     susc_class <- epidemic$susc_class
     susc_grade <- epidemic$susc_grade
     susc_out_school <- epidemic$susc_out_school
-    susc_teacher <- epidemic$susc_teacher
-    susc_tt <- epidemic$susc_tt
-    susc_ts <- epidemic$susc_ts
-    cont_close <- epidemic$cont_close
-    cont_class <- epidemic$cont_class
-    cont_grade <- epidemic$cont_grade
-    cont_out_school <- epidemic$cont_out_school
-    cont_teacher <- epidemic$cont_teacher
-    cont_tt <- epidemic$cont_tt
-    cont_ts <- epidemic$cont_ts
     # For plotting
     for(j in 1:length(ns)){
       # Students
@@ -236,10 +216,8 @@ for(scenario in 1){
     absences_teachers[[scenario]][it, "Quarantined"] <- length(unique(df_teach_hist[df_teach_hist$iso_state=="Q","id"]))
     absences_teachers[[scenario]][it, "Total absent"] <- absences_teachers[[scenario]][it, 1] + absences_teachers[[scenario]][it, 2]
     
-    infected_students <- unique(df_agent[!is.na(df_agent$location),"id"])
-    infected_teachers <- unique(df_teacher[!is.na(df_teacher$location),"id"])
-    sec_cases_students[[scenario]][[it]] <- sapply(infected_students, function(x) sum(x%in%df_agent$infector)+sum(x%in%df_teacher$infector))
-    sec_cases_teachers[[scenario]][[it]] <- sapply(infected_teachers, function(x) sum(x%in%df_agent$infector)+sum(x%in%df_teacher$infector))
+    sec_cases_students[[scenario]][[it]] <- as.numeric(table(df_agent$infector))
+    sec_cases_teachers[[scenario]][[it]] <- as.numeric(table(df_teacher$infector))
   }
   end_time <- Sys.time()
   run_time <- end_time-start_time
@@ -253,5 +231,5 @@ total_run_time <- total_end_time-total_start_time
 print(paste0("Total runtime = ", total_run_time))
 
 # Saving output
-save.image(file=paste0(resultsPath,folder,'/sim_1.RData'))
+save.image(file=paste0(resultsPath,folder,'/sim.RData'))
 
