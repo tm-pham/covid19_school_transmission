@@ -1,3 +1,4 @@
+options(warn=-1)
 # Packages necessary
 check.and.install.pkgs <- function(pkgs){
   new.packages <- pkgs[!pkgs %in% installed.packages()[,"Package"]]

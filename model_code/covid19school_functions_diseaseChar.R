@@ -14,13 +14,9 @@
 # scale = scale of gamma distribution
 # Output:
 # n values drawn from incubation period distribution
-inc.period <- function(n=1, shape=5.807, scale=0.948){
+inc.period <- function(n=1, shape=1.58, scale=7.11){
   return(rweibull(n, shape=1.58, scale=7.11))
   # return(rgamma(n, shape=5.807, scale=0.948))
-}
-
-prop.symp.teacher <- function(n=1, vaccination_flag){
-  
 }
 
 prop.symp <- function(n=1, teacher=T, vaccination_flag=F){

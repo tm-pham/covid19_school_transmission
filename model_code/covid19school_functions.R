@@ -4,7 +4,7 @@ source("covid19school_screening_function.R")
 source("covid19school_quarantine_isolation_function.R")
 source("covid19school_transmission_function.R")
 source("covid19school_external_foi_function.R")
-source("covid19school_plotting_functions.R")
+source("../plotting_code/covid19school_plotting_functions.R")
 
 # ============================================================================ #
 # Packages necessary
@@ -95,7 +95,7 @@ no.contacts <- function(time_steps, t_out_school=16/24){
 
 # ============================================================================ #
 # Assign teachers to subjects
-assign.teachers <- function(df_teacher, grades, subjects, initial=F){
+assign.teachers <- function(df_teacher, grades, subjects, id=NULL, initial=F){
   if(initial) id <- 1
   ind <- which(df_teacher$grade%in%grades & df_teacher$subject%in%subjects)
   remaining <- 1:nrow(df_teacher[ind,])

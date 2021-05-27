@@ -26,7 +26,8 @@ isolation <- function(t_i, df_history, df_agent, tol = 1e-5){
     probs <- ifelse(probs<0, 0, probs)
     # probs <- df_inf_sens[df_inf_sens$time%in%t_since_inf, "pcr_sens"] # Prob that symptomatic individual was tested positive      
     pos_tested <- sapply(probs, function(x) sample(c(0,1), size=1, prob = c(1-x, x))) 
-    pos_tested_ids <- curr_symp_ids[pos_tested==1]
+    compliant_ids <- unlist(df_agent %>% filter(iso_compliance==1) %>% summarize(id))
+    pos_tested_ids <- intersect(curr_symp_ids[pos_tested==1], compliant_ids)
     t_inc_pos <- t_inc[pos_tested==1]
     if(length(pos_tested_ids)>0){
       # Isolate positive tested individuals
@@ -79,6 +80,8 @@ quarantine.close.contacts <- function(t_i,
     }
 
     quaran_ids <- quaran_ids[order(match(quaran_ids, unique(df_agent$id)))]
+    compliant_ids <- unlist(df_agent %>% filter(iso_compliance==1) %>% summarize(id))
+    quaran_ids <- intersect(quaran_ids, compliant_ids)
     # Check whether those students were already quarantined or isolated? Not implemented yet
     if(length(quaran_ids)>0){
       # df_teach_hist <- df_teach_hist %>% mutate(state=replace(state, id%in%teacher_id & time>=t_i & time<=t_i+iso_time, "Q"))

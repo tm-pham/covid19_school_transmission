@@ -35,8 +35,44 @@ school.epidemic <- function(seed = 12345,
   no_contacts = no.contacts(time_steps) # Are no contacts taking place? 
 
   # Initialize data frames for students and teachers and contact network
-  source("covid19school_init_vars.R")
-  # -------------------------------------------------------------------------- #
+  # source("covid19school_init_vars.R")
+  init <- init.vars(sero_prev_students = 0.25, 
+                    sero_prev_teacher = 0.25,
+                    occup = occup, 
+                    group_per_step = group_per_step, 
+                    class_size = class_size, 
+                    n_grades = n_grades, 
+                    n_cont_same_class = n_cont_same_class, 
+                    n_cont_vec = n_cont_vec, 
+                    n_cont_close = n_cont_close, 
+                    n_cont_out_school - n_cont_out_school, 
+                    n_cont_other = n_cont_other, 
+                    n_subjects = n_subjects, 
+                    n_quaran = n_quaran, 
+                    n_cont_teachers = n_cont_teachers)
+  df_history <- init$df_history 
+  df_agent <- init$df_agent
+  df_teach_hist <- init$df_teach_hist 
+  df_teacher <- init$df_teacher 
+  df_teacher_gcs <- init$df_teacher_gcs
+  df_screening <- init$df_screening 
+  screening_list <- init$screening_list 
+  df_risk_testing <- init$df_risk_testing 
+  risk_testing_list <- init$risk_testing_list 
+  cont_close <- init$cont_close 
+  cont_class <- init$cont_class 
+  cont_grade <- init$cont_grade 
+  cont_out_school <- init$cont_out_school
+  cont_teacher <- init$cont_teacher 
+  cont_tt <- init$cont_tt 
+  susc_close <- init$susc_close 
+  susc_class <- init$susc_class 
+  susc_grade <- init$susc_grade 
+  susc_out_school <- init$susc_out_school
+  susc_teacher <- init$susc_teacher 
+  susc_tt <- init$susc_tt
+  
+    # -------------------------------------------------------------------------- #
   # Vaccinated teachers
   # -------------------------------------------------------------------------- #
   vacc_teachers <- sample(c(0,1), size=nrow(df_teacher), prob=c(1-prop_vaccinated[2], prop_vaccinated[2]), replace=T)

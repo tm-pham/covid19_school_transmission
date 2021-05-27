@@ -1,138 +1,18 @@
 rm(list=ls())
-
-source("covid19school_packages.R")  # Installs and loads all necessary pacakges
+setwd("/Users/tm-pham/surfdrive/PHD/Utrecht/JuliusCenter/COVID-19_school_transmission/code/model_code/")
+source("covid19school_packages.R")  # Installs and loads all necessary packages
+options(warn=0)                     # Turn warning messages on again
 source("covid19school_functions.R") # Loads all relevant functions
-source("covid19school_plotting_functions.R") # Loads all functions for plotting
 source("covid19school_vars.R")      # Load all relevant variables
+source("covid19school_init_vars_function.R") 
 source("covid19school_epidemic.R")  # Load main function for simulation
-
-### Variables
-iter=100
-
-resultsPath="../results/"
-folder='simJ1'
-if(!file.exists(paste0(resultsPath,folder))) dir.create(file.path(paste0(resultsPath,folder)))
-print(paste0("File path = ", resultsPath,folder))
-
-### Scenarios
-suffix <- c("", "", "_vaccination","_risk_based_testing","_screening_twice_vaccination","_screening_twice_weekly")
-scenarios <- c("Full occup", 
-               "Half occup", 
-               "Vaccination (full)", 
-               "Risk based testing (half)",
-               "Screening twice + Vaccination (full)",
-               "Screening twice weekly (full)")
-length(suffix)==length(scenarios)
-
-###
-tol = 1e-5
-
-###
-no_int_vec = c(F,rep(F, 5))
-
-### Proportion of effective contacts of teachers
-# 0.5 for half occupancy, 0.3 for full occupancy
-# sample_prop = c(0.1, 0.25, 0.1, 0.25, 0.1, 0.1)
-sample_prop = c(0.13, 0.18, 0.13, 0.18, 0.13, 0.13)
-# sample_prop = c(0.2, 0.3, 0.2, 0.3, 0.2, 0.2)
-
-### Scaling factor for transmission probability for teacher-student contact
-cont_susc_scale = c(0.5, 0.85)
-
-### Scaling factor for transmission probability from teachers
-prop_vaccinated = c(0, 0.85)
-
-### External incidence rate for importations
-external_prob = 0.75*c(0.0007965315, 0.0007965315)
-
-### Adherence to screening
-screening_adherence <- 0.5
-risk_testing_adherence <- 0.5
-
-### Time
-unit=24
-steps <- 8/24; time_period <- 4*7; time_steps <- seq(1, time_period, by = steps)
-group_per_step <- rep(c(rep(1,(1/steps)*(24/unit)),rep(2,(1/steps)*(24/unit))), time_period/2)[1:length(time_steps)] # Assign groups to each time point, assuming 2 groups
-
-### Types of individuals
-types <- c("S", "PS", "IS", "IA", "R", "IH", "Q")
-
-### Screening days
-testing_mat <- matrix(c(rep(0, times=7), 
-                        rep(0, times=7), 
-                        rep(0, times=7), 
-                        rep(0, times=7), 
-                        c(1,0,1,0,0,0,0),
-                        c(1,0,1,0,0,0,0)), ncol=7, byrow=T)
-colnames(testing_mat) <- day_names
-nrow(testing_mat)==length(scenarios)
-
-
-### Occupancy
-occup_suffix <- c("full_occup",
-                  "half_occup",
-                  "full_occup",
-                  "half_occup",
-                  "full_occup",
-                  "full_occup")
-occup <- c(1, 0.5, 
-           1, 0.5,
-           1, 1) # Occupancy level, options: 0.5, 1
-
-### Flags for screening, risk-based testing and vaccination
-scr_flags <- c(F,F,F,F,T,T); risk_flags <- c(F,F,F,T,F,F)
-vacc_flag <- c(F,F,T,F,T,F)
-
-## ============================================================================ #
-# Absent days and absent individuals
-abs_days_students <- rep(list(data.frame(matrix(rep(NA, 3*iter), nrow=iter, ncol=3, byrow=T))), length(scenarios))
-absences_students <- rep(list(data.frame(matrix(rep(NA, 3*iter), nrow=iter, ncol=3, byrow=T))), length(scenarios))
-abs_days_teachers <- rep(list(data.frame(matrix(rep(NA, 3*iter), nrow=iter, ncol=3, byrow=T))), length(scenarios))
-absences_teachers <- rep(list(data.frame(matrix(rep(NA, 3*iter), nrow=iter, ncol=3, byrow=T))), length(scenarios))
-
-# Peak number of infected individuals
-peak_students <- rep(list(data.frame(matrix(rep(NA, 4*iter), nrow=iter, ncol=4, byrow=T))), length(scenarios))
-peak_teachers <- rep(list(data.frame(matrix(rep(NA, 4*iter), nrow=iter, ncol=4, byrow=T))), length(scenarios))
-
-# Infector
-infector_students <- infector_teachers <- vector(mode="list", length=length(scenarios))
-
-contact_student_teachers <- vector(mode="list", length=length(scenarios))
-
-# Outbreak size
-outbreak_data_students <- outbreak_data_teachers <- vector(mode="list", length=length(scenarios))
-outbreak_size_students <- outbreak_size_teachers <- rep(list(rep(0,iter)), length(scenarios))
-
-# Outbreak size per "location"
-outbreak_per_loc_st <- rep(list(data.frame(matrix(rep(NA, 3*iter), nrow=iter, ncol=3, byrow=T))), length(scenarios))
-outbreak_per_loc_teach <- rep(list(data.frame(matrix(rep(NA, 3*iter), nrow=iter, ncol=3, byrow=T))), length(scenarios))
-
-# Symptomatic cases
-symptomatic_students <- rep(list(rep(0,iter)), length(scenarios))
-symptomatic_teachers <- rep(list(rep(0,iter)), length(scenarios))
-
-# Secondary cases
-sec_cases_students <- sec_cases_teachers <- vector(mode="list", length=length(scenarios))
-sec_symp_students <- sec_symp_teachers <- vector(mode="list", length=length(scenarios))
-
-# Detected students and teachers by risk-based testing
-det_risk_students <- det_risk_teachers <- vector(mode="list", length=length(scenarios))
-
-# Detected students and teachers by risk-based testing
-IA_quaran_students <- IS_quaran_students <- vector(mode="list", length=length(scenarios))
-IA_iso_teachers <- IA_iso_students <- vector(mode="list", length=length(scenarios))
-
-# Number over time
-ns_list <- vector(mode="list", length=length(scenarios))
-nt_list <- vector(mode="list", length=length(scenarios))
-epidemic_list <- vector(mode="list", length=length(scenarios))
 
 # ============================================================================ #
 # Starting the simulations
 # ============================================================================ #
 total_start_time <- Sys.time()
-print(paste0("Number of iterations: ", iter))
-for(scenario in 2){
+print(paste("Starting the simulations with", iter, "iterations."))
+for(scenario in 1){
   # Matrix output template
   mat <- matrix(0, nrow=length(time_steps), ncol=iter)
   ns <- nt <- rep(list(mat),7)
@@ -201,7 +81,15 @@ for(scenario in 2){
       # Teachers
       nt[[j]][,it] <- sapply(unique(df_teach_hist$time), function(x) nrow(df_teach_hist %>% filter(state==types[j] | iso_state==types[j], abs(time-x)<=tol)))
     }
+    # Incidence of symptomatic individuals
+    new_symp_t <- sort(df_agent$iso_time[which(df_agent$iso_time>=0)])
+    new_symp[[scenario]][it,1] <- length(new_symp_t[new_symp_t<=7])
+    new_symp[[scenario]][it,2] <- length(new_symp_t[new_symp_t>7 & new_symp_t<=14])
+    new_symp[[scenario]][it,3] <- length(new_symp_t[new_symp_t>14 & new_symp_t<=21])
+    new_symp[[scenario]][it,4] <- length(new_symp_t[new_symp_t>21 & new_symp_t<=28])
     
+    
+    # Contacts between teachers and students
     contact_student_teachers[[scenario]][[it]] <- unlist(lapply(cont_ts, function(x) length(x)))
     
     # Outbreak size students
@@ -278,16 +166,17 @@ for(scenario in 2){
     det_risk_teachers[[scenario]][[it]] <- sum(df_risk_testing$pos_teachers)
     
     # Infected students detected in quarantine (symptomatic)
+    # Only student go into quarantine
     IS_quaran_students[[scenario]][[it]] <- length(df_agent[df_agent$quaran==1 & df_agent$state=="IS", "id"])
     IA_quaran_students[[scenario]][[it]] <- length(df_agent[df_agent$quaran==1 & df_agent$state=="IA", "id"])
     
-    # Asymptomatically infected teachers in isolation
+    # Asymptomatically infected students and teachers in isolation
     IA_iso_students[[scenario]][[it]] <- length(df_agent[df_agent$iso==1 & df_agent$state=="IA", "id"])
     IA_iso_teachers[[scenario]][[it]] <- length(df_teacher[df_teacher$iso==1 & df_teacher$state=="IA", "id"])
   }
   end_time <- Sys.time()
   run_time <- end_time-start_time
-  print(paste0("Runtime = ", run_time))
+  print(paste0("Runtime for scenario ", scenario, ": ", run_time))
   
   ns_list[[scenario]] <- ns
   nt_list[[scenario]] <- nt

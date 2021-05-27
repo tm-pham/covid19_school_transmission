@@ -122,6 +122,7 @@ infect.students <- function(i, t_i, time_names,
                             susc_grade=NULL, 
                             susc_out_school=NULL, 
                             susc_teacher=NULL,
+                            susc_ts=NULL,
                             infecteds,
                             contacts_in_school,
                             tol=1e-5){
@@ -150,6 +151,7 @@ infect.students <- function(i, t_i, time_names,
               susc_grade = susc_grade,
               susc_out_school = susc_out_school, 
               susc_teacher = susc_teacher,
+              susc_ts=susc_ts,
               infecteds=infecteds))
 }
 
@@ -158,6 +160,7 @@ infect.teachers <- function(i, t_i, time_names,
                             inf_teacher_ids,
                             df_teach_hist,
                             df_teacher,
+                            susc_teacher=NULL,
                             susc_tt=NULL, 
                             susc_ts=NULL,
                             infecteds,
@@ -184,6 +187,7 @@ infect.teachers <- function(i, t_i, time_names,
   
   return(list(df_teach_hist=df_teach_hist,
               df_teacher=df_teacher,
+              susc_teacher=susc_teacher,
               susc_tt = susc_tt,
               susc_ts = susc_ts,
               infecteds=infecteds))
@@ -255,6 +259,7 @@ teacher.infect.susc <- function(i, t_i, time_names,
                                            susc_grade, 
                                            susc_out_school, 
                                            susc_teacher,
+                                           susc_ts,
                                            infecteds,
                                            contacts_in_school)
       df_history <- infected_students$df_history
@@ -263,6 +268,7 @@ teacher.infect.susc <- function(i, t_i, time_names,
       susc_class <- infected_students$susc_class
       susc_grade <- infected_students$susc_grade
       susc_teacher <- infected_students$susc_teacher
+      susc_ts <- infected_students$susc_ts
       infecteds <- infected_students$infecteds
     }
   }
@@ -287,11 +293,13 @@ teacher.infect.susc <- function(i, t_i, time_names,
                                            inf_teacher_ids,
                                            df_teach_hist,
                                            df_teacher,
+                                           susc_teacher,
                                            susc_tt, 
                                            susc_ts,
                                            infecteds)
       df_teach_hist <- infected_teachers$df_teach_hist
       df_teacher <- infected_teachers$df_teacher
+      susc_teacher <- infected_teachers$susc_teacher
       susc_tt <- infected_teachers$susc_tt
       susc_ts <- infected_teachers$susc_ts
       infecteds <- infected_teachers$infecteds
@@ -382,6 +390,7 @@ student.infect.susc <- function(i, t_i, time_names,
                                            susc_grade, 
                                            susc_out_school, 
                                            susc_teacher,
+                                           susc_ts,
                                            infecteds,
                                            contacts_in_school)
       df_history <- infected_students$df_history
@@ -390,6 +399,7 @@ student.infect.susc <- function(i, t_i, time_names,
       susc_class <- infected_students$susc_class
       susc_grade <- infected_students$susc_grade
       susc_teacher <- infected_students$susc_teacher
+      susc_ts <- infected_students$susc_ts
       infecteds <- infected_students$infecteds
     }
   }
@@ -415,11 +425,13 @@ student.infect.susc <- function(i, t_i, time_names,
                                            inf_teacher_ids,
                                            df_teach_hist,
                                            df_teacher,
+                                           susc_teacher,
                                            susc_tt, 
                                            susc_ts,
                                            infecteds)
       df_teach_hist <- infected_teachers$df_teach_hist
       df_teacher <- infected_teachers$df_teacher
+      susc_teacher <- infected_teachers$susc_teacher
       susc_tt <- infected_teachers$susc_tt
       susc_ts <- infected_teachers$susc_ts
       infecteds <- infected_teachers$infecteds
@@ -498,7 +510,7 @@ infect.susc <- function(i, t_i, time_names,
                              vacc = F)
     # Determine susceptible contacts of infected student
     # Get index of infected id in contact lists
-    ind <- which(as.numeric(names(cont_close))==i)
+    ind <- which(as.numeric(names(susc_close))==i)
     # Susceptible contacts are dependent on whether student is currently
     # in school or outside school
     if(contacts_out_school[abs(time_steps-t_i)<=tol]==1){
@@ -536,6 +548,7 @@ infect.susc <- function(i, t_i, time_names,
                                            susc_grade, 
                                            susc_out_school, 
                                            susc_teacher,
+                                           susc_ts,
                                            infecteds,
                                            contacts_in_school)
       df_history <- infected_students$df_history
@@ -544,6 +557,7 @@ infect.susc <- function(i, t_i, time_names,
       susc_class <- infected_students$susc_class
       susc_grade <- infected_students$susc_grade
       susc_teacher <- infected_students$susc_teacher
+      susc_ts <- infected_students$susc_ts
       infecteds <- infected_students$infecteds
     }
   }
@@ -569,11 +583,13 @@ infect.susc <- function(i, t_i, time_names,
                                            inf_teacher_ids,
                                            df_teach_hist,
                                            df_teacher,
+                                           susc_teacher,
                                            susc_tt, 
                                            susc_ts,
                                            infecteds)
       df_teach_hist <- infected_teachers$df_teach_hist
       df_teacher <- infected_teachers$df_teacher
+      susc_teacher <- infected_teachers$susc_teacher
       susc_tt <- infected_teachers$susc_tt
       susc_ts <- infected_teachers$susc_ts
       infecteds <- infected_teachers$infecteds
