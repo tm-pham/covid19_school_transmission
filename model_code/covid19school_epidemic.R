@@ -84,10 +84,22 @@ school.epidemic <- function(seed = 12345,
   if(screening_flag){
     df_agent$adherence <- sample(c(0,1), size=length(df_agent$id), prob=c(1-screening_adherence, screening_adherence), replace=T)
     df_teacher$adherence <- sample(c(0,1), size=length(df_teacher$id), prob=c(1-screening_adherence, screening_adherence), replace=T)
+    # Sample individuals who will be compliant to isolation and quarantine
+    df_agent$iso_compliance[df_agent$adherence==0] <- sample(c(0,1), size=length(which(df_agent$adherence==0)), prob=c(1-compliance_iso, compliance_iso), replace=T)
+    df_agent$iso_compliance[df_agent$adherence==1] <- sample(c(0,1), size=length(which(df_agent$adherence==1)), prob=c(1-compliance_iso, compliance_iso), replace=T)
+    # Sample individuals who will be compliant to isolation and quarantine
+    df_teacher$iso_compliance[df_teacher$adherence==0] <- sample(c(0,1), size=length(which(df_teacher$adherence==0)), prob=c(1-compliance_iso, compliance_iso), replace=T)
+    df_teacher$iso_compliance[df_teacher$adherence==1] <- sample(c(0,1), size=length(which(df_teacher$adherence==1)), prob=c(1-compliance_iso, compliance_iso), replace=T)
   } 
   if(risk_based_flag){
     df_agent$adherence <- sample(c(0,1), size=length(df_agent$id), prob=c(1-risk_testing_adherence, risk_testing_adherence), replace=T)
     df_teacher$adherence <- sample(c(0,1), size=length(df_teacher$id), prob=c(1-risk_testing_adherence, risk_testing_adherence), replace=T)
+    # Sample individuals who will be compliant to isolation and quarantine
+    df_agent$quaran_compliance[df_agent$adherence==0] <- sample(c(0,1), size=length(which(df_agent$adherence==0)), prob=c(1-compliance_quaran, compliance_quaran), replace=T)
+    df_agent$quaran_compliance[df_agent$adherence==1] <- sample(c(0,1), size=length(which(df_agent$adherence==1)), prob=c(1-compliance_quaran, compliance_quaran), replace=T)
+    # Sample individuals who will be compliant to isolation and quarantine
+    df_teacher$quaran_compliance[df_teacher$adherence==0] <- sample(c(0,1), size=length(which(df_teacher$adherence==0)), prob=c(1-compliance_quaran, compliance_quaran), replace=T)
+    df_teacher$quaran_compliance[df_teacher$adherence==1] <- sample(c(0,1), size=length(which(df_teacher$adherence==1)), prob=c(1-compliance_quaran, compliance_quaran), replace=T)
   }
 
   inf_count <- 0

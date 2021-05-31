@@ -1,17 +1,22 @@
 # ============================================================================ #
 # Risk-based testing
 # ---------------------------------------------------------------------------- #
-# Input:
-# t_i = current time
-# df_history
-# df_agent
-# df_teach_hist
-# df_teacher
-# pos_tested_ids = vector with ids of individuals
-# ---------------------------------------------------------------------------- #
-# Output: 
-# Updated: df_history, df_agent, df_teach_hist, df_teacher
-# Updated: susc_close, susc_class, susc_grade, susc_teacher
+# For all positive tested individuals, class mates, other contacts in school 
+# and teachers are tested with an antigen test and isolated if test result is
+# positive. 
+# 1. Identify all class mates and contacts in school (= cont_grade) who are in
+#    the same group (important for half occupancy). 
+# 2. Divide the eligible individuals into those who are non infected (important
+#    to account for false positive) and those who are actually infected
+#    (pre-symptomatically and asymptomatically infected). 
+# 3. Perform the testing using the testing function. 
+# 4. Account for compliance to isolation: Only those tho are compliant will be
+#    isolated. 
+# 5. Update the susceptible contact lists (i.e., remove those who are isolated
+#    from the list of susceptible contacts). 
+# 6. Repeat 1-5 for teachers of the positive tested index case. 
+# 7. If teacher is positive tested index case then perform 1-5 for all students
+#    educated by the teacher (i.e., the respective classes). 
 # ============================================================================ #
 risk_based_testing <- function(t_i, 
                                df_history, 
@@ -50,7 +55,7 @@ risk_based_testing <- function(t_i,
     # Account for adherence
     curr_noninf <- df_agent[df_agent$id%in%curr_noninf$id & df_agent$adherence==1, ]
     curr_inf <- df_agent[df_agent$id%in%curr_inf$id & df_agent$adherence==1, ]
-    
+    # Testing
     tested <- testing(t_i, df_history, df_agent, curr_noninf, curr_inf)
     ind_students <- c(tested$FP_ind, tested$pos_ind)
     det_students <- tested$pos_tested_ids
@@ -60,9 +65,6 @@ risk_based_testing <- function(t_i,
       df_agent[df_agent$id%in%ids, "iso_time"] <- rep(t_i, length(ids))
       df_agent[df_agent$id%in%ids, "iso"] <- rep(1, length(ids))
       # Remove isolated individuals from eligible susceptible contacts
-      # susc_close <- lapply(susc_close, function(x) setdiff(unlist(x), ids))
-      # susc_class <- lapply(susc_class, function(x) setdiff(unlist(x), ids))
-      # susc_grade <- lapply(susc_grade, function(x) setdiff(unlist(x), ids))
       susc_close <- update.susc.contacts(t_i, df_history, susc_close)
       susc_class <- update.susc.contacts(t_i, df_history, susc_class)
       susc_grade <- update.susc.contacts(t_i, df_history, susc_grade)
@@ -119,6 +121,9 @@ risk_based_testing <- function(t_i,
     
     tested <- testing(t_i, df_history, df_agent, curr_noninf, curr_inf)
     ind_students <- c(tested$FP_ind, tested$pos_ind)
+    compliant_ids <- unlist(df_agent %>% filter(iso_compliance==1) %>% summarize(id))
+    compliant_ind <- which(df_history$id%in%compliant_ids)
+    ind_students <- intersect(ind_students, compliant_ind)
     det_students <- c(det_students, tested$pos_tested_ids)
     if(length(ind_students)>0){
       df_history[ind_students,"iso_state"] <- "IH"
@@ -126,9 +131,6 @@ risk_based_testing <- function(t_i,
       df_agent[df_agent$id%in%ids, "iso_time"] <- rep(t_i, length(ids))
       df_agent[df_agent$id%in%ids, "iso"] <- rep(1, length(ids))
       # Remove isolated individuals from eligible susceptible contacts
-      # susc_close <- lapply(susc_close, function(x) setdiff(unlist(x), ids))
-      # susc_class <- lapply(susc_class, function(x) setdiff(unlist(x), ids))
-      # susc_grade <- lapply(susc_grade, function(x) setdiff(unlist(x), ids))
       susc_close <- update.susc.contacts(t_i, df_history, susc_close)
       susc_class <- update.susc.contacts(t_i, df_history, susc_class)
       susc_grade <- update.susc.contacts(t_i, df_history, susc_grade)
@@ -147,6 +149,10 @@ risk_based_testing <- function(t_i,
     
     tested_teacher <- testing(t_i, df_teach_hist, df_teacher, curr_t_noninf, curr_t_inf)
     ind_teacher <- c(tested_teacher$FP_ind, tested_teacher$pos_ind)
+    # Account for compliance to isolation
+    compliant_ids <- unlist(df_teacher %>% filter(iso_compliance==1) %>% summarize(id))
+    compliant_ind <- which(df_teach_hist$id%in%compliant_ids)
+    ind_teacher <- intersect(ind_teacher, compliant_ind)
     det_teachers <- c(det_teachers, tested_teacher$pos_tested_ids)
     if(length(ind_teacher)>0){
       df_teach_hist[ind_teacher , "iso_state"] <- "IH"
