@@ -6,7 +6,7 @@ This repository contains the data, code and figures for the manuscript "Modellin
 The manuscript and supplementary material of the study can be found on ... 
 
 ## Model code
-The simulation code was built by Thi Mui Pham using R (version 4.0.2). 
+The simulation code was built by Thi Mui Pham using R (version 4.0.1). 
 
 The code is divided into several parts. Please find a short overview below. A more detailed description can be found in the supplementary material. 
 ### Running the code
@@ -20,7 +20,7 @@ Please check the file and folder paths in the bash file.
 ### Epidemic
 [covid19school_epidemic.R](https://github.com/tm-pham/covid19_school_transmission/blob/master/model_code/covid19school_epidemic.R): Function for simulating the epidemic in the school
 ### Variables
-[covid19school_vars.R](https://github.com/tm-pham/covid19_school_transmission/blob/master/model_code/covid19school_vars.R): Setting variabels
+[covid19school_vars.R](https://github.com/tm-pham/covid19_school_transmission/blob/master/model_code/covid19school_vars.R): Setting variables
 
 [covid19school_init_vars.R](https://github.com/tm-pham/covid19_school_transmission/blob/master/model_code/covid19school_init_vars.R): Initializing the data frames for students and teachers and contact networks of students. 
 ### Functions
