@@ -25,9 +25,13 @@ Please check the file and folder paths in the bash file.
 [covid19school_init_vars_function.R](https://github.com/tm-pham/covid19_school_transmission/blob/master/model_code/covid19school_init_vars_function.R): Initializing the data frames for students and teachers and contact networks of students. 
 ### Main functions
 [covid19school_transmission_function.R](https://github.com/tm-pham/covid19_school_transmission/blob/master/model_code/covid19school_transmission_function.R): Function for transmission events. 
+
 [covid19school_quarantine_isolation_function.R](https://github.com/tm-pham/covid19_school_transmission/blob/master/model_code/covid19school_quarantine_isolation_function.R): Function for isolation of symptomatic individuals and quarantine of their close contacts.
+
 [covid19school_external_foi_function.R](https://github.com/tm-pham/covid19_school_transmission/blob/master/model_code/covid19school_external_foi_function.R): Function for infection of individuals from community.
+
 [covid19school_screening_function.R](https://github.com/tm-pham/covid19_school_transmission/blob/master/model_code/covid19school_screening_function.R): Function for regular screening
+
 [covid19school_risk_testing_function.R](https://github.com/tm-pham/covid19_school_transmission/blob/master/model_code/covid19school_risk_testing_function.R): Function for risk-based testing
 
 ## Data
