@@ -3,7 +3,7 @@
 This repository contains the data, code and figures for the manuscript "Modelling the impact of preventive measures on the transmission of SARS-CoV-2 in secondary schools in the Netherlands" by Thi Mui Pham et al
 
 ## Manuscript
-The manuscript and supplementary material of the study can be found on ... 
+The manuscript and supplementary material of the study can be found on [here](https://github.com/tm-pham/covid19_school_transmission/blob/master/manuscript/COVID_19_School_transmission_in_NL.pdf). 
 
 ## Model code
 The simulation code was built by Thi Mui Pham using R (version 4.0.1). 
@@ -34,4 +34,4 @@ All data used in this work can be found ...
 ## Correspondence
 Corresponding authors of this work: Thi Mui Pham (t.m.pham-2@umcutrecht.nl)
 
-Last update: 22nd May 2021
+Last update: 7th June 2021
