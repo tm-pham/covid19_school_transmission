@@ -34,9 +34,6 @@ Please check the file and folder paths in the bash file.
 
 [covid19school_risk_testing_function.R](https://github.com/tm-pham/covid19_school_transmission/blob/master/model_code/covid19school_risk_testing_function.R): Function for risk-based testing
 
-## Data
-All data used in this work can be found ...
-
 ## Correspondence
 Corresponding authors of this work: Thi Mui Pham (t.m.pham-2@umcutrecht.nl)
 
