@@ -7,8 +7,6 @@ Please note that we are still in the progress of refining the model and new func
 ## Correspondence
 Corresponding authors of this work: Thi Mui Pham (t.m.pham-2@umcutrecht.nl)
 
-Last update: 14th June 2021
-
 ## Manuscript
 The manuscript and supplementary material of the study can be found on [here](https://github.com/tm-pham/covid19_school_transmission/blob/master/manuscript/COVID_19_School_transmission_in_NL.pdf). 
 
