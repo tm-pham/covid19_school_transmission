@@ -8,7 +8,7 @@ The manuscript and supplementary material of the study can be found on [here](ht
 ## Model code
 The simulation code was built by Thi Mui Pham using R (version 4.0.1). 
 
-The code is divided into several parts. Please find a short overview below. A more detailed description can be found in the supplementary material. 
+The code is divided into several parts. Please find a short overview below.
 ### Running the code
 [run_simulations_in_parallel.sh](https://github.com/tm-pham/covid19_school_transmission/blob/master/model_code/run_simulations_in_parallel.sh): Bash script to run the simulation code for several scenarios in parallel. You can run the script by executing
 ```
