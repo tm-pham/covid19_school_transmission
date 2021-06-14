@@ -37,4 +37,4 @@ Please check the file and folder paths in the bash file.
 ## Correspondence
 Corresponding authors of this work: Thi Mui Pham (t.m.pham-2@umcutrecht.nl)
 
-Last update: 7th June 2021
+Last update: 14th June 2021
