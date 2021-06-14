@@ -1,6 +1,6 @@
 # Modelling the impact of preventive measures on the transmission of SARS-CoV-2 in secondary schools in the Netherlands
 ## Description
-This repository contains the data, code and figures for the manuscript "Modelling the impact of preventive measures on the transmission of SARS-CoV-2 in secondary schools in the Netherlands" by Thi Mui Pham et al
+This repository contains the data, code and figures for the manuscript "Modelling the impact of preventive measures on the transmission of SARS-CoV-2 in secondary schools in the Netherlands" by Thi Mui Pham, Ganna Rozhnova, Ilse Westerhof, Marc Bonten, Martin Bootsma, Mirjam Kretzschmar, Patricia Buijning-Verhagen. This report  serves  as  the  basis  for  the  [presentation](https://assets-eu-01.kc-usercontent.com/546dd520-97db-01b7-154d-79bb6d950a2d/1bf8fdb4-940e-4ea2-b29d-213cdcfa5eb2/20210528_presentatie_Onderzoek\%20openen\%20middelbare\%20scholen.pdf) delivered  by  the  authors  on  20  May  2021  for  the Ministry of OCW (Ministry of Education, Culture and Science) and the OMT (Outbreak Management Team). 
 
 ## Manuscript
 The manuscript and supplementary material of the study can be found on [here](https://github.com/tm-pham/covid19_school_transmission/blob/master/manuscript/COVID_19_School_transmission_in_NL.pdf). 
