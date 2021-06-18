@@ -10,6 +10,27 @@ Corresponding authors of this work: Thi Mui Pham (t.m.pham-2@umcutrecht.nl)
 ## Manuscript
 The manuscript and supplementary material of the study can be found on [here](https://github.com/tm-pham/covid19_school_transmission/blob/master/manuscript/COVID_19_School_transmission_in_NL.pdf). 
 
+## Summary
+We developed an agent-based model for SARS-CoV-2 transmission in a secondary school parameterized using observational data from a pilot study including contact patterns and test results collected in February-April 2021 in NL. 
+
+This work was done in a short amount of time and thus, we made some simplifying assumptions but we performed sensitivity analyses to check whether our overall results were robust to these assumptions. 
+
+Our base case scenario represents the situation in NL before full reopening: half occupancy w baseline measures (isolation of symptomatic cases&quarantine of close contacts) and risk-based testing of classmates&other contacts of symptomatic cases (50% adherence to testing). 
+
+We estimated the effect of reopening sec. schools to full occupancy with baseline measures (as implemented in NL from 7th June 2021) on the no. of school-related infections in students&teachers within the 1st month. 
+
+We compared it with the base case scenario, with twice-weekly screening (antigen self-testing, different levels of adherences) and with vaccination of teachers prior to reopening on the no. of school-related infections in students&teachers within 1st month. 
+
+We accounted for introductions from the community and calibrated the probability to become infected from school-unrelated contacts in the community to data from the pilot study in March 2021. 
+
+Our results suggest that screening twice weekly at 50% adherence can significantly reduce infections in both students and teachers. Advancing vaccination of teachers before reopening could further reduce infections and is especially effective when screening adherence is low. 
+
+The main implications of this work are that safe reopening is possible IF students and teachers perform self-testing twice weekly at high adherences, especially since infection risk has declined since March. 
+
+We didn't explicitly model aerosol transmission in rooms, physical distancing nor mask-wearing. We assumed an R-value of 1.05 in all scenarios based on the estimate in March in NL. It reflects the reduced transmissibility due to physical distancing and mitigation measures. 
+
+This is work-in-progress and we will continue to refine the model. Updated results will be uploaded in this GitHub repository and at some point also to a preprint server. 
+
 ## Model code
 The simulation code was built by Thi Mui Pham using R (version 4.0.1). 
 
